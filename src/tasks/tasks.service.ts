@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TaskEntity, TaskStatus } from './tasks.entity';
 import { v4 } from 'uuid'
-import { UpdateTaskDto } from './dto/tasks.dto';
+import { CreateTaskDto, UpdateTaskDto } from './dto/tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -14,12 +14,12 @@ export class TasksService {
     },
   ];
 
-  create(task: TaskEntity): TaskEntity {
+  create(task: CreateTaskDto): TaskEntity {
     this.taskList.push({
       id: v4(),
       title: task.title,
       description: task.description,
-      status: task.status,
+      status: TaskStatus.PENDING,
     });
 
     return this.taskList.at(-1);
@@ -29,11 +29,13 @@ export class TasksService {
     const index = this.taskList.findIndex((t) => t.id === id);
 
     if (index != -1) {
+      const taskSaved: TaskEntity = { ...this.taskList[index] };
+
       const newTask: TaskEntity = {
         id: id,
-        title: task.title,
-        description: task.description,
-        status: task.status,
+        title: task?.title ?? taskSaved.title,
+        description: task?.description ?? taskSaved.description,
+        status: task?.status ?? taskSaved.status,
       };
 
       this.taskList[index] = { ...newTask };
