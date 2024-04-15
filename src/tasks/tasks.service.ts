@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TaskEntity, TaskStatus } from './tasks.entity';
 import { v4 } from 'uuid'
+import { UpdateTaskDto } from './dto/tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -24,12 +25,12 @@ export class TasksService {
     return this.taskList.at(-1);
   }
 
-  update(task: TaskEntity): TaskEntity {
-    const index = this.taskList.findIndex((t) => t.id === task.id);
+  update(id: string, task: UpdateTaskDto): TaskEntity {
+    const index = this.taskList.findIndex((t) => t.id === id);
 
     if (index != -1) {
       const newTask: TaskEntity = {
-        id: task.id,
+        id: id,
         title: task.title,
         description: task.description,
         status: task.status,
